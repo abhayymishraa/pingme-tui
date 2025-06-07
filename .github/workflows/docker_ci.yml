@@ -31,3 +31,6 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: abhaymishra129/pingme:latest
+
+      - name: Trigger Render Deployment
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
