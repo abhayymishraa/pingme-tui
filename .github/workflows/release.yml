@@ -1,0 +1,41 @@
+name: Release Build
+
+on:
+  release:
+    types: [published]  
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: pingme
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: pingme
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: pingme
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Upload Release Binary
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
