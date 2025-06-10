@@ -2,7 +2,7 @@ name: Release Build
 
 on:
   release:
-    types: [published]  
+    types: [published]
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
             artifact: pingme
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact: pingme
+            artifact: pingme.exe
 
     steps:
       - uses: actions/checkout@v3
@@ -33,9 +33,14 @@ jobs:
       - name: Build
         run: cargo build --release --target ${{ matrix.target }}
 
+      - name: Archive Binary
+        run: |
+          cd target/${{ matrix.target }}/release
+          zip ${{ matrix.artifact }}-${{ github.ref_name }}-${{ matrix.target }}.zip ${{ matrix.artifact }}
+
       - name: Upload Release Binary
         uses: softprops/action-gh-release@v1
         with:
-          files: target/${{ matrix.target }}/release/${{ matrix.artifact }}
+          files: target/${{ matrix.target }}/release/${{ matrix.artifact }}-${{ github.ref_name }}-${{ matrix.target }}.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
