@@ -19,9 +19,6 @@ jobs:
           - os: macos-latest
             target: x86_64-apple-darwin
             artifact: pingme
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            artifact: pingme.exe
 
     steps:
       - uses: actions/checkout@v3
